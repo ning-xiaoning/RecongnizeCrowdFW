@@ -1,0 +1,71 @@
+{
+    "name": "MPCount",
+    "n_gpu": 1,
+
+    "arch": {
+        "type": "DGModel_final",
+        "args": {
+            "pretrained": true,
+            "mem_size": 1024,
+            "mem_dim": 256,
+            "cls_thrs": 0.5,
+            "err_thrs": 0.5,
+            "den_dropout": 0.5,
+            "cls_dropout": 0.3,
+            "has_err_loss": false,
+            "patch_size": 10000,
+            "log_para": 1000
+        }
+    },
+    "data_loader": {
+        "type": "ShanghaiTechDataLoader",
+        "args":{
+            "data_dir": "data/processed/ShanghaiTechA",
+            "crop_size":320, 
+            "downsample":1,
+            "method": "train", 
+            "is_gray": false, 
+            "unit_size": 16, 
+            "pre_resize":1,
+            "batch_size": 16,
+            "shuffle": true,
+            "validation_split": 0,
+            "num_workers": 16,
+            "training": true
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.001,
+            "weight_decay": 0.0001
+
+        }
+    },
+    "loss": "mpcount_loss",
+    "metrics": ["MAE", "MSE"],
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "max_lr": 0.001,
+            "epochs": 300,
+            "steps_per_epoch": 15,
+            "final_div_factor": 1000
+        }
+    },
+    "trainer": {
+        "epochs": 1000,
+        "save_dir": "LSaved",
+        "save_period": 1,
+        "verbosity": 2,
+        
+        "early_stop": 500,
+
+        "tensorboard": true
+    },
+
+    "result_info":{
+        "is_saved": true,
+        "saved_dir": "result/train"
+    }
+}

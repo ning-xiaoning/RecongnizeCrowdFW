@@ -1,0 +1,14 @@
+{
+    "name": "Data_Preprocess",
+    "dataset":{
+        "name": "ShanghaiTechA",
+        "params":
+        {
+            "min_size": 512,
+            "max_size": 2048,
+            "save_dm": true
+        }
+    },
+    "input_dir": "data/raw",
+    "saved_dir": "data/processed"
+}

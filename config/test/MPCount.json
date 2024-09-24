@@ -1,0 +1,24 @@
+{
+    "name": "MPCount",
+    "model_path": "LSaved/models/MPCount/0815_105627/checkpoint-epoch635.pth",
+    "saved_dir": "result/pred/MPCount",
+    "data_loader": {
+        "type": "ShanghaiTechDataLoader",
+        "args":{
+            "data_dir": "data/processed/ShanghaiTechA",
+            "crop_size":320, 
+            "downsample":1,
+            "method": "test", 
+            "is_gray": false, 
+            "unit_size": 16, 
+            "pre_resize":1,
+            "batch_size": 1,
+            "shuffle": false,
+            "validation_split": 0,
+            "num_workers": 16,
+            "training": false
+        }
+    }
+
+}
+
