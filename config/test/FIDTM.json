@@ -1,0 +1,15 @@
+{
+  "name": "FIDTM",
+  "dataset": "ShanghaiA",
+  "data_dir": "./npydata/ShanghaiA_test.npy",
+  "save_path": "save_file/A_baseline",
+  "workers": 16,
+  "print_freq": 200,
+  "start_epoch": 0,
+  "batch_size": 1,
+  "best_pred": 1e5,
+  "gpu_id": "0",
+  "lr": 1e-4,
+  "preload_data": true,
+  "visual": true
+}

@@ -1,0 +1,8 @@
+{
+  "type": "inference",
+  "images_path": "infer_data/images/all_carmera_id",
+  "infer_saves_path": "infer_saves",
+  "pre": "NWPU/model_best_nwpu.pth",
+  "start_epoch": 0,
+  "best_pred": 1e5
+}
