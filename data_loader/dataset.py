@@ -10,6 +10,11 @@ import os
 from glob import glob
 import re
 
+
+import numpy as np
+import h5py
+import cv2
+
 import sys
 sys.path.append('.')
 
@@ -210,6 +215,99 @@ class ShangHaiTechDataset(Dataset):
     
     def __len__(self):
         return len(self.img_paths)
+
+class listDataset_FIDTM(Dataset):
+    def __init__(self, root,  method, crop_size, transform=None, train=False, seen=0, num_workers=4):
+
+        self.nSamples = len(root)
+        self.root = root
+        self.method = method
+        self.crop_size = crop_size
+        self.transform = transform
+        self.train = train
+        self.seen = seen
+        self.num_workers = num_workers
+        self.img_paths = self.get_img_paths(os.path.join(self.root, self.method))
+
+
+    def __len__(self):
+        return self.nSamples
+
+    def __getitem__(self, index):
+        assert index <= len(self), 'index range error'
+
+        img_path = self.img_paths[index]
+
+        fname = os.path.basename(img_path)
+        img, fidt_map, kpoint = self.load_data_fidt(img_path)
+
+        '''data augmention'''
+        if self.method == 'train':
+            if random.random() > 0.5:
+                fidt_map = np.ascontiguousarray(np.fliplr(fidt_map))
+                img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                kpoint = np.ascontiguousarray(np.fliplr(kpoint))
+
+        fidt_map = fidt_map.copy()
+        kpoint = kpoint.copy()
+        img = img.copy()
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        '''crop size'''
+        if self.method == 'train':
+            fidt_map = torch.from_numpy(fidt_map)
+
+            width = self.crop_size
+            height = self.crop_size
+
+            pad_y = max(0, width - img.shape[1])
+            pad_x = max(0, height - img.shape[2])
+            if pad_y + pad_x > 0:
+                img = F.pad(img, [0, pad_x, 0, pad_y], value=0)
+                fidt_map = F.pad(fidt_map, [0, pad_x, 0, pad_y], value=0)
+                kpoint = np.pad(kpoint, [(0, pad_y), (0, pad_x)], mode='constant', constant_values=0)
+            # print(img.shape)
+            crop_size_x = random.randint(0, img.shape[1] - width)
+            crop_size_y = random.randint(0, img.shape[2] - height)
+            img = img[:, crop_size_x: crop_size_x + width, crop_size_y:crop_size_y + height]
+            kpoint = kpoint[crop_size_x: crop_size_x + width, crop_size_y:crop_size_y + height]
+            fidt_map = fidt_map[crop_size_x: crop_size_x + width, crop_size_y:crop_size_y + height]
+
+        return fname, img, fidt_map, kpoint
+
+    def get_img_paths(self, directory):
+        img_paths = list()
+        pattern = ".*\d+\.jpg"
+        for root, dirs, files in os.walk(directory):
+            # 对于当前目录中的文件，检查是否匹配模式
+            for filename in files:
+                if re.match(pattern, filename):
+                    img_paths.append(os.path.join(root, filename))
+        img_paths.sort()
+        return img_paths
+
+    def load_data_fidt(self, img_path):
+        gt_path = img_path.replace('.jpg', '.h5')
+        img = Image.open(img_path).convert('RGB')
+
+        while True:
+            try:
+                gt_file = h5py.File(gt_path)
+                k = np.asarray(gt_file['kpoint'])
+                fidt_map = np.asarray(gt_file['fidt_map'])
+                break
+            except OSError:
+                print("path is wrong, can not load ", img_path)
+                cv2.waitKey(1000)  # Wait a bit
+
+        img = img.copy()
+        fidt_map = fidt_map.copy()
+        k = k.copy()
+
+        return img, fidt_map, k
+
         
 if __name__ == '__main__':
     dataset = ShangHaiTechDataset("data/processed/ShanghaiTechA", 320, 1, 'train', False, 1)

@@ -1,0 +1,95 @@
+{
+    "name": "FIDTM",
+    "n_gpu": 1,
+
+    "arch": {
+        "type": "HighResolutionNet",
+        "args": {
+            "MODEL":{
+                "EXTRA":{
+                    "FINAL_CONV_KERNEL": 1,
+                    "STAGE1": {
+                        "NUM_MODULES": 1,
+                        "NUM_RANCHES": 1,
+                        "BLOCK": "BOTTLENECK",
+                        "NUM_BLOCKS": [4],
+                        "NUM_CHANNELS": [64],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE2": {
+                        "NUM_MODULES": 1,
+                        "NUM_BRANCHES": 2,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4],
+                        "NUM_CHANNELS": [48, 96],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE3": {
+                        "NUM_MODULES": 4,
+                        "NUM_BRANCHES": 3,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4, 4],
+                        "NUM_CHANNELS": [48, 96, 192],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE4": {
+                        "NUM_MODULES": 3,
+                        "NUM_BRANCHES": 4,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4, 4, 4],
+                        "NUM_CHANNELS": [48, 96, 192, 384],
+                        "FUSE_METHOD": "SUM"
+                    }
+                }
+            }
+
+        }
+    },
+    "data_loader": {
+        "type": "ShanghaiTechDataLoader_FIDTM",
+        "args":{
+            "data_dir": "data/processed/ShangHaiA",
+            "crop_size": 256,
+            "method": "train",
+            "batch_size": 16,
+            "seen": 0,
+            "shuffle": true,
+            "validation_split": 0.2,
+            "num_workers": 16
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.0001,
+            "weight_decay": 0.0005
+
+        }
+    },
+    "loss": "fidtm_loss",
+    "metrics": ["MAE", "MSE"],
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "max_lr": 0.001,
+            "epochs": 300,
+            "steps_per_epoch": 15,
+            "final_div_factor": 1000
+        }
+    },
+    "trainer": {
+        "epochs": 1000,
+        "save_dir": "LSaved",
+        "save_period": 1,
+        "verbosity": 2,
+        
+        "early_stop": 500,
+
+        "tensorboard": true
+    },
+
+    "result_info":{
+        "is_saved": true,
+        "saved_dir": "result/train"
+    }
+}

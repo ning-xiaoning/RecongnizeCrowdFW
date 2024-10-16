@@ -22,3 +22,8 @@ def mpcount_loss(gt_dmaps, dmaps1, dmaps2, cmaps1, cmaps2, loss_con, gt_cmaps):
     loss_total = loss_den + 10 * loss_cls + 10 * loss_con # + loss_err 
     
     return loss_den, loss_cls, loss_total
+
+def fidtm_loss(dmaps1, gt_dmaps):
+    criterion = torch.nn.MSELoss().cuda()
+    loss = criterion(dmaps1, gt_dmaps)
+    return loss

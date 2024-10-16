@@ -5,7 +5,6 @@ import numpy as np
 import data_loader.data_loaders as module_data
 import model.loss as module_loss
 import model.metric as module_metric
-import model.MPCount.MPCount as module_arch
 from parse_config import ConfigParser
 from trainer import Trainer
 from utils import prepare_device
@@ -26,6 +25,10 @@ def main(config):
     valid_data_loader = data_loader.split_validation()
 
     # build model architecture, then print to console
+    if config['name'] == 'MPCount':
+        import model.MPCount.MPCount as module_arch
+    if config['name'] == 'FIDTM':
+        import model.FIDTM.FIDTM as module_arch
     model = config.init_obj('arch', module_arch)
     logger.info(model)
 
@@ -34,6 +37,9 @@ def main(config):
     model = model.to(device)
     if len(device_ids) > 1:
         model = torch.nn.DataParallel(model, device_ids=device_ids)
+
+    # if isinstance(model, torch.nn.DataParallel):
+    #     model = model.module
 
     # get function handles of loss and metrics
     criterion = getattr(module_loss, config['loss'])
@@ -56,9 +62,9 @@ def main(config):
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    args.add_argument('-c', '--config', default="config/train/MPCount.json", type=str,
+    args.add_argument('-c', '--config', default="config/train/FIDTM.json", type=str,
                       help='config file path (default: None)')
-    args.add_argument('-r', '--resume', default=None, type=str,
+    args.add_argument('-r', '--resume', default="LSaved/models/FIDTM/1015_155921/checkpoint-epoch9.pth", type=str,
                       help='path to latest checkpoint (default: None)')
     args.add_argument('-d', '--device', default=None, type=str,
                       help='indices of GPUs to enable (default: all)')

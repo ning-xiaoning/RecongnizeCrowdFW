@@ -29,7 +29,7 @@
             "pre_resize":1,
             "batch_size": 16,
             "shuffle": true,
-            "validation_split": 0,
+            "validation_split": 0.2,
             "num_workers": 16,
             "training": true
         }
@@ -54,7 +54,7 @@
         }
     },
     "trainer": {
-        "epochs": 1000,
+        "epochs": 5,
         "save_dir": "LSaved",
         "save_period": 1,
         "verbosity": 2,

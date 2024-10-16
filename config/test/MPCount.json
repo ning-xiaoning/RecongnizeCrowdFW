@@ -1,7 +1,22 @@
 {
     "name": "MPCount",
-    "model_path": "LSaved/models/MPCount/0815_105627/checkpoint-epoch635.pth",
+    "model_path": "LSaved/models/MPCount/1015_114648/checkpoint-epoch5.pth",
     "saved_dir": "result/pred/MPCount",
+    "arch": {
+        "type": "DGModel_final",
+        "args": {
+            "pretrained": true,
+            "mem_size": 1024,
+            "mem_dim": 256,
+            "cls_thrs": 0.5,
+            "err_thrs": 0.5,
+            "den_dropout": 0.5,
+            "cls_dropout": 0.3,
+            "has_err_loss": false,
+            "patch_size": 10000,
+            "log_para": 1000
+        }
+    },
     "data_loader": {
         "type": "ShanghaiTechDataLoader",
         "args":{

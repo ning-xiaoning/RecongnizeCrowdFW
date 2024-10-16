@@ -1,0 +1,64 @@
+{
+    "name": "FIDTM",
+    "model_path": "LSaved/models/FIDTM/1015_123545/checkpoint-epoch9.pth",
+    "saved_dir": "result/pred/FIDTM",
+    "arch": {
+        "type": "HighResolutionNet",
+        "args": {
+            "MODEL":{
+                "EXTRA":{
+                    "FINAL_CONV_KERNEL": 1,
+                    "STAGE1": {
+                        "NUM_MODULES": 1,
+                        "NUM_RANCHES": 1,
+                        "BLOCK": "BOTTLENECK",
+                        "NUM_BLOCKS": [4],
+                        "NUM_CHANNELS": [64],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE2": {
+                        "NUM_MODULES": 1,
+                        "NUM_BRANCHES": 2,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4],
+                        "NUM_CHANNELS": [48, 96],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE3": {
+                        "NUM_MODULES": 4,
+                        "NUM_BRANCHES": 3,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4, 4],
+                        "NUM_CHANNELS": [48, 96, 192],
+                        "FUSE_METHOD": "SUM"
+                    },
+                    "STAGE4": {
+                        "NUM_MODULES": 3,
+                        "NUM_BRANCHES": 4,
+                        "BLOCK": "BASIC",
+                        "NUM_BLOCKS": [4, 4, 4, 4],
+                        "NUM_CHANNELS": [48, 96, 192, 384],
+                        "FUSE_METHOD": "SUM"
+                    }
+                }
+            }
+
+        }
+    },
+    "data_loader": {
+        "type": "ShanghaiTechDataLoader_FIDTM",
+        "args": {
+            "data_dir": "data/processed/ShangHaiA",
+            "crop_size": 256,
+            "method": "test",
+            "batch_size": 1,
+            "seen": 0,
+            "shuffle": false,
+            "validation_split": 0,
+            "num_workers": 16
+        }
+    },
+    "loss": "fidtm_loss",
+    "metrics": ["MAE", "MSE"]
+}
+
